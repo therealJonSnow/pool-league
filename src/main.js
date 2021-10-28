@@ -3,7 +3,6 @@ import './tailwind.css'
 import App from './App.vue'
 import { routes } from './routes.js'
 import { createRouter, createWebHistory } from 'vue-router'
-// import { firestorePlugin } from 'vuefire'
 const app = createApp(App)
 
 const router = createRouter({
@@ -12,5 +11,4 @@ const router = createRouter({
 })
 
 app.use(router)
-// app.use(firestorePlugin)
 app.mount('#app')
