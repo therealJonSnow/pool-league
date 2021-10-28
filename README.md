@@ -6,6 +6,8 @@ Pool league table created with:
 - Tailwind CSS
 - Cloud Firebase
 
+Feel free to take and edit for your own use. Only requires a google firbase backend and you're good to go. Easily deployed on netlify as well!
+
 ![alt text](https://github.com/therealJonSnow/pool-league/blob/master/screenshot.png)
 
 ## Scoring
