@@ -1,0 +1,18 @@
+{
+  "users": [
+    {
+      "name": "Jonny",
+      "played": 68,
+      "win": 51,
+      "loss": 17,
+      "points": 10
+    },
+    {
+      "name": "Finley",
+      "played": 68,
+      "win": 17,
+      "loss": 51,
+      "points": 10
+    }
+  ]
+}
