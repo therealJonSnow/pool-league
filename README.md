@@ -6,7 +6,7 @@ Pool league table created with:
 - Tailwind CSS
 - Cloud Firebase
 
-![alt text](https://github.com/therealJonSnow/pool-league/blob/main/screenshot.png)
+![alt text](https://github.com/therealJonSnow/pool-league/blob/master/screenshot.png)
 
 ## Scoring
 
