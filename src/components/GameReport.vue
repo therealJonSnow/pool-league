@@ -92,9 +92,12 @@ export default {
           winnerNewPoints = 3
           loserNewPoints = -3
         }
-        updatePoints(db, this.winner, winnerNewPoints)
-        updatePoints(db, this.loser, loserNewPoints)
-  
+        setTimeout(() => {
+          updatePoints(db, this.winner, winnerNewPoints)
+          updatePoints(db, this.loser, loserNewPoints)
+          this.$emit('updateBoard')
+        }, 500)
+        
         this.showForm = false
       } else {
         alert('BE HONEST')

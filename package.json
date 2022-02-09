@@ -7,7 +7,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "firebase": "^9.1.3",
+    "firebase": "^9.6.6",
     "unplugin-vue-components": "^0.16.0",
     "vca-firebase": "^0.2.0",
     "vue": "^3.2.20",

@@ -3,7 +3,7 @@
   <div v-if="isDataLoaded" class="background absolute top-1/2 left-1/2  rounded-3xl transform -translate-x-1/2 -translate-y-1/2 custom-shadow flex flex-col items-center justify-center p-10">
     <h1 class="text-3xl mb-6">POPCOMMS P&#127921;&#127921;L LEAGUE</h1>
     <Leaderboard class="mb-6" :leaderboardData="leaderboardData"></Leaderboard>
-    <GameReport :leaderboardData="leaderboardData"></GameReport>
+    <GameReport :leaderboardData="leaderboardData" @updateBoard="updateBoard"></GameReport>
   </div>
 </template>
 
@@ -23,6 +23,13 @@ export default {
         return true
       }
       return false
+    }
+  },
+  methods: {
+    updateBoard () {
+      getUsers(db).then((x) => {
+        this.leaderboardData = x;
+      })
     }
   },
   mounted () {

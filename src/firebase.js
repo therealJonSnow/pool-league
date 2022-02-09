@@ -63,6 +63,7 @@ export async function updateBasicStats(db, player, winner) {
 }
 
 export async function updatePoints(db, player, points) {
+  console.log('update', player)
   const playerRef = doc(db, "users", player);
   try {
     await runTransaction(db, async (transaction) => {
@@ -70,6 +71,8 @@ export async function updatePoints(db, player, points) {
       if (!playerDoc.exists()) {
         throw "Document does not exist!";
       }
+
+      console.log(playerRef)
 
       transaction.update(playerRef, { points: playerDoc.data().points + points });
     });
