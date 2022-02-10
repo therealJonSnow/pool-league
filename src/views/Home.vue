@@ -27,6 +27,7 @@ export default {
   },
   methods: {
     updateBoard () {
+      console.log('update!')
       getUsers(db).then((x) => {
         this.leaderboardData = x;
       })

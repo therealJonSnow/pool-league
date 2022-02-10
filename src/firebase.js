@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { doc, query, orderBy, getFirestore, collection, getDocs, runTransaction } from 'firebase/firestore';
+import { doc, query, orderBy, getFirestore, collection, getDocs, setDoc, runTransaction } from 'firebase/firestore';
 
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -20,18 +20,30 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
 // Add a new user in collection "users"
-// export async function make(db) {
-//   await setDoc(doc(db, "users", "Javier"), {
-//     win: 0,
-//     loss: 0,
-//     played: 0,
-//     points: 0
-//   });
-// }
+export async function make(db) {
+  await setDoc(doc(db, "players", "Jonny"), {
+    record: [
+      {
+        player: 'Ben',
+        score: 0
+      },
+      {
+        player: 'Finley',
+        score: 0
+      },
+      {
+        player: 'Jonny',
+        score: 0
+      },
+    ]
+  });
+  console.log('make')
+}
 // make(db)
 
+// , orderBy("points", "desc")
 export async function getUsers(db) {
-  const q = query(collection(db, "users"), orderBy("points", "desc"));
+  const q = query(collection(db, "players"));
   const querySnapshot = await getDocs(q);
   const users = []
   querySnapshot.forEach((doc) => {
@@ -43,18 +55,42 @@ export async function getUsers(db) {
   return users
 }
 
-export async function updateBasicStats(db, player, winner) {
-  const playerRef = doc(db, "users", player);
+export async function updateBasicStats(db, winner, loser) {
+  const winnerRef = doc(db, "players", winner.name);
+  const loserRef = doc(db, "players", loser.name);
+
+  const copyWinner = JSON.parse(JSON.stringify(winner))
+  copyWinner.record.record = copyWinner.record.record.map((x) => {
+    if (x.player === loser.name) x.score += 1
+    return x
+  })
+
+  const copyLoser = JSON.parse(JSON.stringify(loser))
+  copyLoser.record.record = copyLoser.record.record.map((x) => {
+    if (x.player === winner.name) x.score -= 1
+    return x
+  })
+
   try {
     await runTransaction(db, async (transaction) => {
-      const playerDoc = await transaction.get(playerRef);
+      const playerDoc = await transaction.get(winnerRef);
       if (!playerDoc.exists()) {
         throw "Document does not exist!";
       }
+      transaction.update(winnerRef, copyWinner.record);
+    });
+    console.log("Transaction successfully committed!");
+  } catch (e) {
+    console.log("Transaction failed: ", e);
+  }
 
-      transaction.update(playerRef, { played: playerDoc.data().played + 1 });
-      if (winner) transaction.update(playerRef, { win: playerDoc.data().win + 1 });
-      if (!winner) transaction.update(playerRef, { loss: playerDoc.data().loss + 1 });
+  try {
+    await runTransaction(db, async (transaction) => {
+      const playerDoc = await transaction.get(loserRef);
+      if (!playerDoc.exists()) {
+        throw "Document does not exist!";
+      }
+      transaction.update(loserRef, copyLoser.record);
     });
     console.log("Transaction successfully committed!");
   } catch (e) {

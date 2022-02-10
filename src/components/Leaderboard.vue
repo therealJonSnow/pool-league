@@ -1,14 +1,20 @@
 <template>
-  <div class="w-96 mx-auto">
-    <div class="grid grid-cols-5 grid-rows-1 items-center justify-items-center font-bold border-b-2 border-b-pink-500 mb-2">
-      <div>name</div>
-      <div>played</div>
-      <div>win</div>
-      <div>loss</div>
-      <div>points</div>
-    </div>
-    <LeaderboardUser v-for="user in leaderboardData" :key="user.name" :user="user"></LeaderboardUser>
-  </div>
+    <table class="w-96 mx-auto">
+      <thead class="text-center">
+        <tr class="mb-3 border-b-2 border-pink-500">
+          <th :style="'width: ' + (1/ (1+leaderboardData.length) * 100) + '%'" class="text-sm text-gray-400 border-r-2 border-pink-500"><span>player</span><span class="ml-4 inline-block transform -rotate-90 origin-center">vs</span></th>
+          <th :style="'width: ' + (1/ (1+leaderboardData.length) * 100) + '%'" v-for="user in leaderboardData" :key="user.name">{{  user.name }}</th>
+          <th :style="'width: ' + (1/ (1+leaderboardData.length) * 100) + '%'">Total</th>
+        </tr>
+      </thead>
+      <tbody class="text-center">
+        <tr class="" v-for="(user, index) in leaderboardData" :key="user.name">
+          <td :class="index === 0 ? 'pt-2' : 'pt-1'" class="pl-2 border-r-2 border-pink-500">{{  user.name }}</td>
+          <td v-for="record in user.record.record" :key="record.player">{{ record.player !== user.name ? record.score : 'n/a'}}</td>
+          <td>{{totalScore(user)}}</td>
+        </tr>
+      </tbody>
+    </table>
 </template>
 
 <script>
@@ -20,6 +26,22 @@ export default {
   },
   props: {
     leaderboardData: Array
+  },
+  methods: {
+    totalScore (user) {
+      let score = 0
+      console.log(user)
+      user.record.record.forEach(record => {
+        score += record.score
+      });
+      return score
+    }
   }
 }
 </script>
+
+<style  scoped>
+.container {
+  grid-template-columns: min-content auto;
+}
+</style>
