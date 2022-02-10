@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "firebase": "^9.6.6",
+    "firebaseui": "^6.0.0",
     "unplugin-vue-components": "^0.16.0",
     "vca-firebase": "^0.2.0",
     "vue": "^3.2.20",

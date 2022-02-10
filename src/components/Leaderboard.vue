@@ -11,13 +11,14 @@
         <tr class="" v-for="(user, index) in leaderboardData" :key="user.name">
           <td :class="index === 0 ? 'pt-2' : 'pt-1'" class="pl-2 border-r-2 border-pink-500">{{  user.name }}</td>
           <td v-for="record in user.record.record" :key="record.player">{{ record.player !== user.name ? record.score : 'n/a'}}</td>
-          <td>{{totalScore(user)}}</td>
+          <td v-html="totalScore(user.record.record)"></td>
         </tr>
       </tbody>
     </table>
 </template>
 
 <script>
+
 
 export default {
   data() {
@@ -30,8 +31,7 @@ export default {
   methods: {
     totalScore (user) {
       let score = 0
-      console.log(user)
-      user.record.record.forEach(record => {
+      user.forEach(record => {
         score += record.score
       });
       return score

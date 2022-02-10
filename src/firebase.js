@@ -1,8 +1,8 @@
 // Import the functions you need from the SDKs you need
+import firebase from 'firebase/compat/app';
 import { initializeApp } from "firebase/app";
-import { doc, query, orderBy, getFirestore, collection, getDocs, setDoc, runTransaction } from 'firebase/firestore';
-
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getAuth } from "firebase/auth";
+import { doc, query, getFirestore, collection, getDocs, setDoc, runTransaction } from 'firebase/firestore';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -16,7 +16,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
+export const auth = getAuth();
 export const db = getFirestore(app);
 
 // Add a new user in collection "users"
@@ -41,7 +41,6 @@ export async function make(db) {
 }
 // make(db)
 
-// , orderBy("points", "desc")
 export async function getUsers(db) {
   const q = query(collection(db, "players"));
   const querySnapshot = await getDocs(q);
@@ -91,26 +90,6 @@ export async function updateBasicStats(db, winner, loser) {
         throw "Document does not exist!";
       }
       transaction.update(loserRef, copyLoser.record);
-    });
-    console.log("Transaction successfully committed!");
-  } catch (e) {
-    console.log("Transaction failed: ", e);
-  }
-}
-
-export async function updatePoints(db, player, points) {
-  console.log('update', player)
-  const playerRef = doc(db, "users", player);
-  try {
-    await runTransaction(db, async (transaction) => {
-      const playerDoc = await transaction.get(playerRef);
-      if (!playerDoc.exists()) {
-        throw "Document does not exist!";
-      }
-
-      console.log(playerRef)
-
-      transaction.update(playerRef, { points: playerDoc.data().points + points });
     });
     console.log("Transaction successfully committed!");
   } catch (e) {
