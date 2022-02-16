@@ -2,7 +2,8 @@
 import firebase from 'firebase/compat/app';
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { doc, query, getFirestore, collection, getDocs, setDoc, runTransaction } from 'firebase/firestore';
+import { doc, updateDoc, query, getFirestore, collection, getDocs, setDoc, runTransaction } from 'firebase/firestore';
+import { looseIndexOf } from '@vue/shared';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -19,28 +20,6 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth();
 export const db = getFirestore(app);
 
-// Add a new user in collection "users"
-export async function make(db) {
-  await setDoc(doc(db, "players", "Jonny"), {
-    record: [
-      {
-        player: 'Ben',
-        score: 0
-      },
-      {
-        player: 'Finley',
-        score: 0
-      },
-      {
-        player: 'Jonny',
-        score: 0
-      },
-    ]
-  });
-  console.log('make')
-}
-// make(db)
-
 export async function getUsers(db) {
   const q = query(collection(db, "players"));
   const querySnapshot = await getDocs(q);
@@ -52,6 +31,57 @@ export async function getUsers(db) {
     })
   });
   return users
+}
+
+// Add a new user in collection "users"
+export async function make(database, name) {
+  getUsers(database).then((value) => {
+    if (!value.find(o => o.name === name)) {
+      let record = []
+      value.forEach(el => {
+        record.push({
+          player: el.name,
+          score: 0
+        })
+      });
+      record.push({
+        player: name,
+        score: 0
+      })
+      setDoc(doc(database, "players", name), {record: record});
+      addNewUserToAll (database, name)
+    }
+  })
+}
+// make(db, 'Jonny')
+
+// Add record of new player to all existing
+export async function addNewUserToAll (database, name) {
+  await getDocs(collection(database, "players")).then(value => {
+    value.forEach((player) => {
+      // player.data() is never undefined for query player snapshots
+      console.log(player.id, " => ", player.data());
+      const playerRef = doc(database, "players", player.id);
+      runTransaction(database, async (transaction) => {
+        const playerDoc = await transaction.get(playerRef);
+  
+        if (!playerDoc.exists()) {
+          throw "Document does not exist!";
+        }
+  
+        const copyRecords = player.data()
+        console.log(copyRecords)
+        if (!copyRecords.record.find(o => o.name === name)) {
+          copyRecords.record.push({
+            player: name,
+            score: 0
+          })
+        }
+        console.log(copyRecords)
+        transaction.update(playerRef, copyRecords);
+      })
+    })
+  });
 }
 
 export async function updateBasicStats(db, winner, loser) {

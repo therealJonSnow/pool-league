@@ -118,6 +118,14 @@ export default {
       this.show = true
     }, 1000);
     getUsers(db).then((x) => {
+      x.forEach(player => {
+        player.record.record = player.record.record.sort(function(a, b) {
+          if (a.player < b.player) return -1;
+          if (a.player > b.player) return 1;
+          return 0;
+        });
+        
+      });
       this.leaderboardData = x;
     })
   }
